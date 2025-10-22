@@ -24,9 +24,38 @@ def dashboard_tutee(request):
     # Sample data for demonstration
     context = {
         'tutors': [
-            {'id': 1, 'name': 'Dr. Sarah Williams', 'subject': 'Mathematics', 'rating': 4.8, 'available_slots': '10:00 AM, 2:00 PM'},
-            {'id': 2, 'name': 'Prof. David Chen', 'subject': 'Physics', 'rating': 4.9, 'available_slots': '11:00 AM, 3:00 PM'},
-            {'id': 3, 'name': 'Ms. Emily Brown', 'subject': 'Chemistry', 'rating': 4.7, 'available_slots': '9:00 AM, 1:00 PM'},
+            {
+                'id': 1, 
+                'name': 'Dr. Sarah Williams', 
+                'subject': 'Mathematics', 
+                'rating': 4.8, 
+                'available_slots': [
+                    {'date': 'Oct 25', 'time': '10:00 AM'},
+                    {'date': 'Oct 25', 'time': '2:00 PM'},
+                    {'date': 'Oct 26', 'time': '11:00 AM'},
+                ]
+            },
+            {
+                'id': 2, 
+                'name': 'Prof. David Chen', 
+                'subject': 'Physics', 
+                'rating': 4.9, 
+                'available_slots': [
+                    {'date': 'Oct 25', 'time': '11:00 AM'},
+                    {'date': 'Oct 26', 'time': '3:00 PM'},
+                ]
+            },
+            {
+                'id': 3, 
+                'name': 'Ms. Emily Brown', 
+                'subject': 'Chemistry', 
+                'rating': 4.7, 
+                'available_slots': [
+                    {'date': 'Oct 25', 'time': '9:00 AM'},
+                    {'date': 'Oct 26', 'time': '1:00 PM'},
+                    {'date': 'Oct 27', 'time': '10:00 AM'},
+                ]
+            },
         ],
         'booked_sessions': [
             {'id': 1, 'tutor': 'Dr. Sarah Williams', 'subject': 'Mathematics', 'date': '2025-10-24', 'time': '10:00 AM'},
@@ -35,7 +64,57 @@ def dashboard_tutee(request):
     return render(request, 'dashboard_tutee.html', context)
 
 def booking_form(request):
-    return render(request, 'booking_form.html')
+    # Sample available time slots for demonstration
+    context = {
+        'tutor_id': request.GET.get('tutor', 1),
+        'tutor_name': 'Dr. Sarah Williams',
+        'tutor_subject': 'Mathematics',
+        'tutor_rating': 4.8,
+        'hourly_rate': 25,
+        'available_slots': [
+            {
+                'id': 1, 
+                'date': 'Friday, October 25, 2025', 
+                'time': '10:00 AM', 
+                'end_time': '11:00 AM',
+                'duration': '1 hour',
+                'day_of_week': 'Friday'
+            },
+            {
+                'id': 2, 
+                'date': 'Friday, October 25, 2025', 
+                'time': '2:00 PM', 
+                'end_time': '3:00 PM',
+                'duration': '1 hour',
+                'day_of_week': 'Friday'
+            },
+            {
+                'id': 3, 
+                'date': 'Saturday, October 26, 2025', 
+                'time': '11:00 AM', 
+                'end_time': '12:00 PM',
+                'duration': '1 hour',
+                'day_of_week': 'Saturday'
+            },
+            {
+                'id': 4, 
+                'date': 'Saturday, October 26, 2025', 
+                'time': '3:00 PM', 
+                'end_time': '4:30 PM',
+                'duration': '1.5 hours',
+                'day_of_week': 'Saturday'
+            },
+            {
+                'id': 5, 
+                'date': 'Monday, October 28, 2025', 
+                'time': '9:00 AM', 
+                'end_time': '10:00 AM',
+                'duration': '1 hour',
+                'day_of_week': 'Monday'
+            },
+        ]
+    }
+    return render(request, 'booking_form.html', context)
 
 def session_manage(request):
     # Sample data for demonstration
