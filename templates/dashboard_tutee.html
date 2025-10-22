@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block title %}Tutee Dashboard - P2P Tutoring Scheduler{% endblock %}
+
+{% block content %}
+<div>
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Tutee Dashboard</h1>
+        <p class="text-gray-600 mt-2">Find tutors and manage your learning sessions</p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">Find a Tutor</h2>
+        <form method="GET" class="flex flex-col md:flex-row gap-4">
+            <div class="flex-1">
+                <input type="text" name="search" placeholder="Search by subject or tutor name..."
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+                <select name="subject" class="w-full md:w-48 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">All Subjects</option>
+                    <option value="mathematics">Mathematics</option>
+                    <option value="physics">Physics</option>
+                    <option value="chemistry">Chemistry</option>
+                    <option value="biology">Biology</option>
+                    <option value="english">English</option>
+                    <option value="history">History</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition">
+                <i class="fas fa-search mr-2"></i>Search
+            </button>
+        </form>
+    </div>
+
+    <!-- Available Tutors -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Available Tutors</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for tutor in tutors %}
+            <div class="border border-gray-200 rounded-lg p-5 hover:shadow-lg transition">
+                <div class="flex items-center mb-4">
+                    <div class="bg-blue-600 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold">
+                        {{ tutor.name|slice:":1" }}
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">{{ tutor.name }}</h3>
+                        <div class="flex items-center mt-1">
+                            <i class="fas fa-star text-yellow-500"></i>
+                            <span class="ml-1 text-gray-600 font-medium">{{ tutor.rating }}</span>
+                            <span class="ml-2 text-gray-500 text-sm">(24 reviews)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 mb-4">
+                    <p class="text-gray-600">
+                        <i class="fas fa-book mr-2 text-blue-600"></i>
+                        <span class="font-medium">Subject:</span> {{ tutor.subject }}
+                    </p>
+                    <p class="text-gray-600">
+                        <i class="fas fa-clock mr-2 text-green-600"></i>
+                        <span class="font-medium">Available:</span> {{ tutor.available_slots }}
+                    </p>
+                </div>
+
+                <div class="border-t border-gray-200 pt-4">
+                    <a href="{% url 'booking_form' %}?tutor={{ tutor.id }}" 
+                       class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center px-4 py-2 rounded-md font-medium transition">
+                        <i class="fas fa-calendar-plus mr-2"></i>Book Session
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- My Booked Sessions -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">My Booked Sessions</h2>
+        
+        {% if booked_sessions %}
+            <div class="space-y-4">
+                {% for session in booked_sessions %}
+                <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-gray-900">{{ session.subject }}</h3>
+                            <div class="mt-2 space-y-1">
+                                <p class="text-gray-600">
+                                    <i class="fas fa-chalkboard-teacher mr-2 text-blue-600"></i>
+                                    Tutor: <span class="font-medium">{{ session.tutor }}</span>
+                                </p>
+                                <p class="text-gray-600">
+                                    <i class="fas fa-calendar mr-2 text-green-600"></i>
+                                    Date: <span class="font-medium">{{ session.date }}</span>
+                                </p>
+                                <p class="text-gray-600">
+                                    <i class="fas fa-clock mr-2 text-purple-600"></i>
+                                    Time: <span class="font-medium">{{ session.time }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-4 md:mt-0 flex flex-col space-y-2 md:ml-4">
+                            <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                                <i class="fas fa-video mr-1"></i>Join Session
+                            </button>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                                <i class="fas fa-edit mr-1"></i>Reschedule
+                            </button>
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                                <i class="fas fa-times mr-1"></i>Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <i class="fas fa-calendar-times text-gray-300 text-6xl mb-4"></i>
+                <p class="text-gray-500 text-lg">No sessions booked yet</p>
+                <p class="text-gray-400 mt-2">Search for a tutor above to get started!</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        <a href="{% url 'session_manage' %}" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+            <div class="flex items-center">
+                <div class="bg-blue-100 rounded-full p-4">
+                    <i class="fas fa-history text-blue-600 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Session History</h3>
+                    <p class="text-gray-600">View all your past and upcoming sessions</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="{% url 'profile' %}" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+            <div class="flex items-center">
+                <div class="bg-purple-100 rounded-full p-4">
+                    <i class="fas fa-user-edit text-purple-600 text-2xl"></i>
+                </div>
+                <div class="ml-4">
+                    <h3 class="text-lg font-semibold text-gray-900">Edit Profile</h3>
+                    <p class="text-gray-600">Update your preferences and information</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

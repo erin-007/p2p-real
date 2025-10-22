@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - P2P Tutoring Scheduler{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-2xl overflow-hidden mb-12">
+    <div class="px-6 py-16 sm:px-12 sm:py-24 lg:py-32">
+        <div class="text-center">
+            <h1 class="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
+                Connect, Learn, and Teach
+            </h1>
+            <p class="mt-6 max-w-2xl mx-auto text-xl text-blue-100">
+                Join our peer-to-peer tutoring platform and unlock your potential. Find expert tutors or share your knowledge with others.
+            </p>
+            <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                <a href="{% url 'dashboard_tutee' %}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-md text-blue-700 bg-white hover:bg-gray-50 transition shadow-lg transform hover:scale-105">
+                    <i class="fas fa-search mr-2"></i>
+                    Find a Tutor
+                </a>
+                <a href="{% url 'dashboard_tutor' %}" class="inline-flex items-center justify-center px-8 py-4 border-2 border-white text-lg font-medium rounded-md text-white hover:bg-white hover:text-blue-700 transition shadow-lg transform hover:scale-105">
+                    <i class="fas fa-chalkboard-teacher mr-2"></i>
+                    Become a Tutor
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="py-12">
+    <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Why Choose P2P Tutoring?</h2>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <!-- Feature 1 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
+            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-blue-600 text-white mb-4">
+                <i class="fas fa-users text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Peer-to-Peer Learning</h3>
+            <p class="text-gray-600">
+                Learn from your peers who understand the challenges you face. Connect with tutors who have been in your shoes.
+            </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
+            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-purple-600 text-white mb-4">
+                <i class="fas fa-calendar-check text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Flexible Scheduling</h3>
+            <p class="text-gray-600">
+                Book sessions that fit your schedule. Our platform makes it easy to find available time slots that work for both parties.
+            </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition transform hover:-translate-y-1">
+            <div class="flex items-center justify-center h-12 w-12 rounded-md bg-green-600 text-white mb-4">
+                <i class="fas fa-star text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Quality Tutors</h3>
+            <p class="text-gray-600">
+                Browse through profiles, ratings, and reviews to find the perfect tutor for your learning needs.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="py-12 bg-gray-100 rounded-lg mt-12">
+    <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">How It Works</h2>
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-4 px-6">
+        <div class="text-center">
+            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-blue-600 text-white text-2xl font-bold mx-auto mb-4">
+                1
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Sign Up</h3>
+            <p class="text-gray-600">Create your account and choose your role</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-purple-600 text-white text-2xl font-bold mx-auto mb-4">
+                2
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Search</h3>
+            <p class="text-gray-600">Find tutors or create your availability</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-green-600 text-white text-2xl font-bold mx-auto mb-4">
+                3
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Book</h3>
+            <p class="text-gray-600">Schedule sessions at your convenience</p>
+        </div>
+        
+        <div class="text-center">
+            <div class="flex items-center justify-center h-16 w-16 rounded-full bg-yellow-600 text-white text-2xl font-bold mx-auto mb-4">
+                4
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Learn</h3>
+            <p class="text-gray-600">Connect and start your learning journey</p>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="bg-blue-600 rounded-lg shadow-xl mt-12 px-6 py-12 text-center">
+    <h2 class="text-3xl font-bold text-white mb-4">Ready to Get Started?</h2>
+    <p class="text-xl text-blue-100 mb-8">Join thousands of students and tutors already using our platform.</p>
+    <a href="{% url 'register' %}" class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-medium rounded-md text-blue-700 bg-white hover:bg-gray-50 transition shadow-lg transform hover:scale-105">
+        Sign Up Now <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+</div>
+{% endblock %}
