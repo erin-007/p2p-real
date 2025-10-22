@@ -1,0 +1,106 @@
+You are building the frontend (HTML + Tailwind + minimal JS) for a Django web app called **P2P Tutoring Scheduler**.
+The backend is Django (authentication, models, sessions, etc.) — only generate the frontend templates and related static files.
+Use Django Template Inheritance with `base.html` and `{% block content %}` blocks.
+
+------------------------------------------------------------
+🎯 PROJECT DESCRIPTION
+------------------------------------------------------------
+This is a peer-to-peer tutoring platform with two roles: **Tutor** and **Tutee**.
+
+At login, the user chooses whether they are a tutor or tutee (or can switch roles later).
+
+Each role has its own dashboard and features.
+
+------------------------------------------------------------
+📂 TEMPLATE STRUCTURE
+------------------------------------------------------------
+/templates/
+│
+├── base.html
+├── home.html
+├── login.html
+├── register.html
+├── dashboard_tutor.html
+├── dashboard_tutee.html
+├── booking_form.html
+├── session_manage.html
+└── profile.html
+
+------------------------------------------------------------
+🌐 PAGE DETAILS
+------------------------------------------------------------
+
+1. base.html
+   - Common navbar (Logo, Dashboard, Logout/Login).
+   - Tailwind CSS via CDN.
+   - Content block `{% block content %}` for page-specific code.
+   - Responsive and clean layout.
+
+2. home.html
+   - Hero section: “Find a Tutor” CTA, “Become a Tutor” button.
+   - Brief tagline: “Connect, Learn, and Teach.”
+
+3. login.html / register.html
+   - Login and sign-up forms.
+   - Dropdown or toggle to select role (Tutor/Tutee).
+   - Include `{% csrf_token %}`.
+   - Tailwind form design.
+
+4. dashboard_tutor.html
+   - Heading: “Tutor Dashboard”.
+   - Show list of upcoming sessions (cards).
+   - Buttons: “Add Session”, “Cancel”, “Reschedule”.
+   - Modal form for creating a new session (Subject, Date, Time, Description).
+
+5. dashboard_tutee.html
+   - Heading: “Tutee Dashboard”.
+   - Search bar to find tutors by subject/name.
+   - List of tutors with available slots.
+   - On clicking a tutor: show booking button.
+   - List of booked sessions (with Cancel/Reschedule buttons).
+
+6. booking_form.html
+   - Form to confirm booking details.
+   - Fields: Tutor, Subject, Date, Time, Duration.
+   - Confirmation alert on successful booking.
+
+7. session_manage.html
+   - Tutors can view Past / Upcoming / Cancelled sessions in tabs.
+   - Edit or cancel any session.
+
+8. profile.html
+   - Tutor: Edit bio, subjects, availability.
+   - Tutee: Edit name, preferred subjects, timezone.
+
+------------------------------------------------------------
+🎨 STYLE
+------------------------------------------------------------
+- Use Tailwind CSS (CDN link).
+- Use card components and modals for neat UI.
+- Add simple icons (Heroicons/Lucide).
+- Alerts for success/error messages.
+- Fully responsive layout (mobile + desktop).
+
+------------------------------------------------------------
+⚙️ DJANGO TAGS
+------------------------------------------------------------
+- Include placeholders for:
+  `{% csrf_token %}`
+  `{% url 'route_name' %}`
+  `{{ user.username }}`
+  `{{ session.subject }}`
+  etc.
+
+------------------------------------------------------------
+✨ EXTRA FEATURES
+------------------------------------------------------------
+- Allow switching between Tutor and Tutee dashboards.
+- Show notification banner when a booking is made or cancelled.
+- Modal pop-ups for adding sessions or confirming cancellations.
+
+------------------------------------------------------------
+🧠 OUTPUT
+------------------------------------------------------------
+Generate all required HTML templates with sample dummy data where appropriate.
+Do not include any backend code — only frontend templates and sample Tailwind markup.
+Ensure templates are plug-and-play ready for Django integration.
