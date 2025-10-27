@@ -1,136 +1,154 @@
-from django.shortcuts import render
+# p2p_tutoring/views.py
+from django.shortcuts import redirect
+# simple redirects — actual logic is in core.views
+def home(request):
+    from django.shortcuts import redirect
+    return redirect('home_core')
+
+def login_view(request):
+    from django.shortcuts import redirect
+    return redirect('login_core')
+
+def register(request):
+    from django.shortcuts import redirect
+    return redirect('register_core')
+
+def dashboard_tutor(request):
+    from django.shortcuts import redirect
+    return redirect('dashboard_tutor_core')
+
+def dashboard_tutee(request):
+    from django.shortcuts import redirect
+    return redirect('dashboard_tutee_core')
+
+def booking_form(request):
+    from django.shortcuts import redirect
+    return redirect('booking_form_core')
+
+def session_manage(request):
+    from django.shortcuts import redirect
+    return redirect('session_manage_core')
+
+def profile(request):
+    from django.shortcuts import redirect
+    return redirect('profile_core')# core/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from .forms import RegisterForm, SessionBookingForm
+from .models import Profile, SessionBooking
+from django.contrib.auth.decorators import login_required
+from django.db import transaction, IntegrityError
 
 def home(request):
     return render(request, 'home.html')
 
+def register(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Account created. Please login.')
+            return redirect('login')
+        else:
+            messages.error(request, 'Please fix the errors below.')
+    else:
+        form = RegisterForm()
+    return render(request, 'register.html', {'form': form})
+
 def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        role = request.POST.get('role')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            try:
+                profile = user.profile
+            except Profile.DoesNotExist:
+                messages.error(request, 'Profile missing; contact admin.')
+                return redirect('login')
+
+            # enforce role selection if provided
+            if role and profile.role != role and profile.role != 'both':
+                messages.error(request, 'You cannot log in as this role.')
+                return redirect('login')
+
+            login(request, user)
+            if profile.role == 'tutor':
+                return redirect('dashboard_tutor')
+            return redirect('dashboard_tutee')
+        else:
+            messages.error(request, 'Invalid credentials.')
     return render(request, 'login.html')
 
-def register(request):
-    return render(request, 'register.html')
+def logout_view(request):
+    logout(request)
+    return redirect('home')
 
+
+@login_required
 def dashboard_tutor(request):
-    # Sample data for demonstration
-    context = {
-        'upcoming_sessions': [
-            {'id': 1, 'subject': 'Mathematics', 'date': '2025-10-25', 'time': '10:00 AM', 'tutee': 'John Doe', 'duration': '1 hour'},
-            {'id': 2, 'subject': 'Physics', 'date': '2025-10-26', 'time': '2:00 PM', 'tutee': 'Jane Smith', 'duration': '1.5 hours'},
-            {'id': 3, 'subject': 'Chemistry', 'date': '2025-10-27', 'time': '4:00 PM', 'tutee': 'Mike Johnson', 'duration': '1 hour'},
-        ]
-    }
-    return render(request, 'dashboard_tutor.html', context)
+    profile = request.user.profile
+    if profile.role not in ('tutor', 'both'):
+        messages.error(request, 'Access denied.')
+        return redirect('dashboard_tutee')
+    sessions = SessionBooking.objects.filter(tutor=request.user).order_by('date', 'time')
+    return render(request, 'dashboard_tutor.html', {'upcoming_sessions': sessions})
 
+
+@login_required
 def dashboard_tutee(request):
-    # Sample data for demonstration
-    context = {
-        'tutors': [
-            {
-                'id': 1, 
-                'name': 'Dr. Sarah Williams', 
-                'subject': 'Mathematics', 
-                'rating': 4.8, 
-                'available_slots': [
-                    {'date': 'Oct 25', 'time': '10:00 AM'},
-                    {'date': 'Oct 25', 'time': '2:00 PM'},
-                    {'date': 'Oct 26', 'time': '11:00 AM'},
-                ]
-            },
-            {
-                'id': 2, 
-                'name': 'Prof. David Chen', 
-                'subject': 'Physics', 
-                'rating': 4.9, 
-                'available_slots': [
-                    {'date': 'Oct 25', 'time': '11:00 AM'},
-                    {'date': 'Oct 26', 'time': '3:00 PM'},
-                ]
-            },
-            {
-                'id': 3, 
-                'name': 'Ms. Emily Brown', 
-                'subject': 'Chemistry', 
-                'rating': 4.7, 
-                'available_slots': [
-                    {'date': 'Oct 25', 'time': '9:00 AM'},
-                    {'date': 'Oct 26', 'time': '1:00 PM'},
-                    {'date': 'Oct 27', 'time': '10:00 AM'},
-                ]
-            },
-        ],
-        'booked_sessions': [
-            {'id': 1, 'tutor': 'Dr. Sarah Williams', 'subject': 'Mathematics', 'date': '2025-10-24', 'time': '10:00 AM'},
-        ]
-    }
-    return render(request, 'dashboard_tutee.html', context)
+    profile = request.user.profile
+    # simple tutors list for search (you can replace with filtering)
+    tutors = Profile.objects.filter(role__in=['tutor', 'both'])
+    booked = SessionBooking.objects.filter(tutee=request.user).order_by('date', 'time')
+    return render(request, 'dashboard_tutee.html', {'tutors': tutors, 'booked_sessions': booked})
 
+
+@login_required
 def booking_form(request):
-    # Sample available time slots for demonstration
-    context = {
-        'tutor_id': request.GET.get('tutor', 1),
-        'tutor_name': 'Dr. Sarah Williams',
-        'tutor_subject': 'Mathematics',
-        'tutor_rating': 4.8,
-        'hourly_rate': 25,
-        'available_slots': [
-            {
-                'id': 1, 
-                'date': 'Friday, October 25, 2025', 
-                'time': '10:00 AM', 
-                'end_time': '11:00 AM',
-                'duration': '1 hour',
-                'day_of_week': 'Friday'
-            },
-            {
-                'id': 2, 
-                'date': 'Friday, October 25, 2025', 
-                'time': '2:00 PM', 
-                'end_time': '3:00 PM',
-                'duration': '1 hour',
-                'day_of_week': 'Friday'
-            },
-            {
-                'id': 3, 
-                'date': 'Saturday, October 26, 2025', 
-                'time': '11:00 AM', 
-                'end_time': '12:00 PM',
-                'duration': '1 hour',
-                'day_of_week': 'Saturday'
-            },
-            {
-                'id': 4, 
-                'date': 'Saturday, October 26, 2025', 
-                'time': '3:00 PM', 
-                'end_time': '4:30 PM',
-                'duration': '1.5 hours',
-                'day_of_week': 'Saturday'
-            },
-            {
-                'id': 5, 
-                'date': 'Monday, October 28, 2025', 
-                'time': '9:00 AM', 
-                'end_time': '10:00 AM',
-                'duration': '1 hour',
-                'day_of_week': 'Monday'
-            },
-        ]
-    }
-    return render(request, 'booking_form.html', context)
+    # booking via form POST
+    if request.method == 'POST':
+        form = SessionBookingForm(request.POST)
+        if form.is_valid():
+            try:
+                # atomic block to avoid race conditions on unique_together
+                with transaction.atomic():
+                    booking = form.save()
+                messages.success(request, 'Booking successful.')
+                return redirect('dashboard_tutee')
+            except IntegrityError:
+                form.add_error(None, 'Selected time slot is no longer available.')
+    else:
+        # prefill form if tutor param provided
+        initial = {}
+        tutor_id = request.GET.get('tutor')
+        if tutor_id:
+            initial['tutor'] = tutor_id
+        form = SessionBookingForm(initial=initial)
+    return render(request, 'booking_form.html', {'form': form})
 
+
+@login_required
 def session_manage(request):
-    # Sample data for demonstration
-    context = {
-        'upcoming_sessions': [
-            {'id': 1, 'subject': 'Mathematics', 'date': '2025-10-25', 'time': '10:00 AM', 'participant': 'John Doe', 'status': 'Confirmed'},
-            {'id': 2, 'subject': 'Physics', 'date': '2025-10-26', 'time': '2:00 PM', 'participant': 'Jane Smith', 'status': 'Confirmed'},
-        ],
-        'past_sessions': [
-            {'id': 3, 'subject': 'Chemistry', 'date': '2025-10-15', 'time': '4:00 PM', 'participant': 'Mike Johnson', 'status': 'Completed'},
-        ],
-        'cancelled_sessions': [
-            {'id': 4, 'subject': 'Biology', 'date': '2025-10-20', 'time': '11:00 AM', 'participant': 'Sarah Lee', 'status': 'Cancelled'},
-        ]
-    }
-    return render(request, 'session_manage.html', context)
+    # show sessions for the logged-in user (tutor or tutee)
+    if request.user.profile.role in ('tutor', 'both'):
+        upcoming = SessionBooking.objects.filter(tutor=request.user).order_by('date', 'time')
+    else:
+        upcoming = SessionBooking.objects.filter(tutee=request.user).order_by('date', 'time')
+    return render(request, 'session_manage.html', {'upcoming_sessions': upcoming})
 
+
+@login_required
 def profile(request):
+    # minimal profile view/edit placeholder
+    if request.method == 'POST':
+        profile = request.user.profile
+        profile.full_name = request.POST.get('full_name', profile.full_name)
+        profile.bio = request.POST.get('bio', profile.bio)
+        profile.subjects = request.POST.get('subjects', profile.subjects)
+        profile.save()
+        messages.success(request, 'Profile updated.')
+        return redirect('profile')
     return render(request, 'profile.html')
