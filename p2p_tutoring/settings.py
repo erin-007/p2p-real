@@ -1,13 +1,23 @@
-# p2p_tutoring/settings.py
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
+# ---------------------------
+# Load environment variables
+# ---------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
+# ---------------------------
+# Security / Debug
+# ---------------------------
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'dev-secret-key-change-me')
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 ALLOWED_HOSTS = ['*'] if DEBUG else os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 
+# ---------------------------
+# Installed apps
+# ---------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -18,6 +28,9 @@ INSTALLED_APPS = [
     'core',
 ]
 
+# ---------------------------
+# Middleware
+# ---------------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -28,12 +41,15 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# ---------------------------
+# URLs / Templates / WSGI
+# ---------------------------
 ROOT_URLCONF = 'p2p_tutoring.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],  # global template dir
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -48,6 +64,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'p2p_tutoring.wsgi.application'
 
+# ---------------------------
+# Database (SQLite)
+# ---------------------------
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -55,6 +74,9 @@ DATABASES = {
     }
 }
 
+# ---------------------------
+# Password Validation
+# ---------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -62,26 +84,37 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# ---------------------------
+# Localization
+# ---------------------------
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
+# ---------------------------
+# Static files
+# ---------------------------
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Auth redirects
+# ---------------------------
+# Authentication Redirects
+# ---------------------------
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard_tutee'
 LOGOUT_REDIRECT_URL = 'home'
 
-# Email (Gmail) - put credentials into environment variables
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('GMAIL_ADDRESS', 'mailmejoe.momo@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('gqwfakdzwupesvei', '')  # use Gmail App Password
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# ---------------------------
+# Brevo Email API Configuration
+# ---------------------------
+BREVO_API_KEY = os.getenv('BREVO_API_KEY', '')
+EMAIL_FROM = os.getenv('EMAIL_FROM', 'noreply@p2ptutor.com')
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://127.0.0.1:8000')
+
+# You are using Brevo API via requests — no EMAIL_BACKEND needed
